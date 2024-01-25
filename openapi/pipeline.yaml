@@ -1,0 +1,524 @@
+openapi: 3.0.0
+info:
+        title: Zilliz Pipeline API, can help ingest docs into pipelines and search relavent text chucks for any text.
+        version: 1.0.0
+servers:
+        - url: https://controller.api.gcp-us-west1.zillizcloud.com
+paths:
+        /v1/pipelines:
+                get:
+                        summary: Get pipelines
+                        operationId: getPipelines
+                        parameters:
+                                - in: query
+                                  name: projectId
+                                  schema:
+                                          type: string
+                                  required: true
+                                  description: projectId of the cluster which has pipelines
+                                  example: proj-f4a545e242143eb03f3ff3
+                        responses:
+                                "200":
+                                        description: Successful response
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/SuccessfulResponse"
+                                "401":
+                                        description: Unauthorized
+                                "404":
+                                        description: Not Found
+                post:
+                        summary: Create pipeline
+                        operationId: createPipeline
+                        description: Create a pipeline on zilliz cloud.
+                        x-openai-isConsequential: true
+                        requestBody:
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: "#/components/schemas/CreatePipelineRequest"
+                        responses:
+                                "200":
+                                        description: Successful response
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/SuccessfulResponse"
+                                "401":
+                                        description: Unauthorized
+                                "404":
+                                        description: Not Found
+        /v1/pipelines/{PipelineID}:
+                get:
+                        summary: Get Pipeline Information
+                        description: Get information about a specific pipeline.
+                        operationId: describePipeline
+                        x-openai-isConsequential: false
+                        parameters:
+                                - name: PipelineID
+                                  in: path
+                                  description: Identifier for the pipeline.
+                                  required: true
+                                  schema:
+                                          type: string
+                        responses:
+                                "200":
+                                        description: Successful response with pipeline information.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/describePipelineResponse"
+                                "404":
+                                        description: Pipeline not found.
+                delete:
+                        summary: Delete Pipeline
+                        description: Delete a specific pipeline.
+                        operationId: dropPipeline
+                        x-openai-isConsequential: true
+                        parameters:
+                                - name: PipelineID
+                                  in: path
+                                  description: Identifier for the pipeline.
+                                  required: true
+                                  schema:
+                                          type: string
+                        responses:
+                                '200':
+                                        description: Pipeline successfully deleted.
+                                '404':
+                                        description: Pipeline not found.
+        /v1/pipelines/{IngestionPipelineID}/run:
+                post:
+                        summary: Run Pipeline
+                        description: Run a Ingestion pipeline with the specified data to ingest docs into pipeline.
+                        x-openai-isConsequential: false
+                        operationId: ingestDoc
+                        parameters:
+                                - name: IngestionPipelineID
+                                  in: path
+                                  description: The ID of the pipeline for ingestion.
+                                  required: true
+                                  schema:
+                                          type: string
+                        requestBody:
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: "#/components/schemas/IngestDocRequest"
+                        responses:
+                                "200":
+                                        description: Ingested doc successfully
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/QueryTextResponse"
+                                "401":
+                                        description: Unauthorized
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+                                "403":
+                                        description: Forbidden
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+
+        /v1/pipelines/{SearchPipelineID}/run:
+                post:
+                        summary: Run Pipeline
+                        description: Run a Search pipeline with the specified data to Query text in vector database.
+                        x-openai-isConsequential: false
+                        operationId: searchDoc
+                        parameters:
+                                - name: SearchPipelineID
+                                  in: path
+                                  description: The ID of the pipeline for searching documents.
+                                  required: true
+                                  schema:
+                                          type: string
+                        requestBody:
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: "#/components/schemas/QueryTextRequest"
+                        responses:
+                                "200":
+                                        description: Search doc successfully
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/QueryTextResponse"
+                                "401":
+                                        description: Unauthorized
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+                                "403":
+                                        description: Forbidden
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+
+        /v1/pipelines/{DeletionPipelineID}/run:
+                post:
+                        summary: Run Pipeline
+                        description: Run a Search pipeline with the specified data to delete docs in vector database.
+                        x-openai-isConsequential: false
+                        operationId: deleteDoc
+                        parameters:
+                                - name: DeletionPipelineID
+                                  in: path
+                                  description: The ID of the pipeline for deleting documents.
+                                  required: true
+                                  schema:
+                                          type: string
+                        requestBody:
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: "#/components/schemas/DeleteDocRequest"
+                        responses:
+                                "200":
+                                        description: Delete doc successfully
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/DeleteDocResponse"
+                                "401":
+                                        description: Unauthorized
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+                                "403":
+                                        description: Forbidden
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: "#/components/schemas/InternalServerErrorResponse"
+
+components:
+        schemas:
+                securitySchemes:
+                CreatePipelineRequest:
+                        type: object
+                        required:
+                                - name
+                                - description
+                                - type
+                                - functions
+                                - clusterId
+                                - projectId
+                        properties:
+                                name:
+                                        type: string
+                                        description: The name of the pipeline
+                                description:
+                                        type: string
+                                        description: A description of the pipeline
+                                type:
+                                        type: string
+                                        enum:
+                                                - INGESTION
+                                                - SEARCH
+                                                - DELETION
+                                        description: The type of pipeline
+                                functions:
+                                        type: array
+                                        items:
+                                                oneOf:
+                                                        - $ref: "#/components/schemas/IndexFunction"
+                                                        - $ref: "#/components/schemas/DeletionFunction"
+                                                        - $ref: "#/components/schemas/SearchFunction"
+                                clusterId:
+                                        type: string
+                                        description: The cluster ID
+                                projectId:
+                                        type: string
+                                        description: The project ID cluster belongs to
+                                collectionName:
+                                        type: string
+                                        description: The name of the new collection
+                                newCollectionName:
+                                        type: string
+                                        description: The name of the new collection
+                IndexFunction:
+                        type: object
+                        required:
+                                - name
+                                - action
+                        properties:
+                                name:
+                                        type: string
+                                        description: The name of the function
+                                action:
+                                        type: string
+                                        enum:
+                                                - INDEX_DOC
+                                                - PRESERVE
+                                        description: The action to perform
+                                inputField:
+                                        type: string
+                                        description: The input field for the function
+                                language:
+                                        type: string
+                                        description: The language for indexing (if applicable)
+                DeletionFunction:
+                        type: object
+                        required:
+                                - name
+                                - action
+                                - inputField
+                        properties:
+                                name:
+                                        type: string
+                                        description: The name of the function
+                                action:
+                                        type: string
+                                        enum:
+                                                - PURGE_DOC
+                                        description: The action to perform
+                                inputField:
+                                        type: string
+                                        description: The input field for the function
+                SearchFunction:
+                        type: object
+                        required:
+                                - name
+                                - action
+                                - inputField
+                                - clusterId
+                                - collectionName
+                        properties:
+                                name:
+                                        type: string
+                                        example: search_chunk_text_and_title
+                                action:
+                                        type: string
+                                        example: SEARCH_DOC_CHUNK
+                                inputField:
+                                        type: string
+                                        example: query_text
+                                clusterId:
+                                        type: string
+                                        example: ${CLUSTER_ID}
+                                collectionName:
+                                        type: string
+                                        example: my_new_collection
+                IngestDocRequest:
+                        type: object
+                        required:
+                                - data
+                        properties:
+                                data:
+                                        type: object
+                                        properties:
+                                                doc_url:
+                                                        type: string
+                QueryTextRequest:
+                        type: object
+                        required:
+                                - data
+                                - params
+                        properties:
+                                data:
+                                        type: object
+                                        properties:
+                                                query_text:
+                                                        type: string
+                                params:
+                                        type: object
+                                        properties:
+                                                limit:
+                                                        type: integer
+                                                        minimum: 1
+                                                offset:
+                                                        type: integer
+                                                        minimum: 0
+                                                outputFields:
+                                                        type: array
+                                                        items:
+                                                                type: string
+                                                        example:
+                                                                - chunk_text
+                                                                - chunk_id
+                                                                - doc_name
+                                                filter:
+                                                        type: string
+                                                        example: chunk_id >= 0
+                DeleteDocRequest:
+                        type: object
+                        properties:
+                                data:
+                                        type: object
+                                        properties:
+                                                doc_name:
+                                                        type: string
+                        required:
+                                - data
+                QueryTextResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                data:
+                                        type: object
+                                        properties:
+                                                result:
+                                                        type: array
+                                                        items:
+                                                                type: object
+                                                                properties:
+                                                                        id:
+                                                                                type: string
+                                                                        distance:
+                                                                                type: number
+                                                                        chunk_id:
+                                                                                type: integer
+                                                                        chunk_text:
+                                                                                type: string
+                                                                        doc_name:
+                                                                                type: string
+                SuccessfulIngestionResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                        example: 200
+                                data:
+                                        type: object
+                                        properties:
+                                                doc_name:
+                                                        type: string
+                                                        example: zilliz_concept_doc.md
+                                                num_chunks:
+                                                        type: integer
+                                                        example: 123
+                DeleteDocResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                        example: 200
+                                data:
+                                        type: object
+                                        properties:
+                                                num_deleted_chunks:
+                                                        type: integer
+                                                        example: 123
+                InternalServerErrorResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                        example: 10039
+                                message:
+                                        type: string
+                                        example: An internal system error occurred. Please retry later.
+                describePipelineResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                        example: 200
+                                data:
+                                        type: object
+                                        properties:
+                                                pipelineId:
+                                                        type: string
+                                                        example: pipe-6ca5dd1b4672659d3c3487
+                                                name:
+                                                        type: string
+                                                        example: my_doc_ingestion_pipeline
+                                                type:
+                                                        type: string
+                                                        example: INGESTION
+                                                description:
+                                                        type: string
+                                                        example: A pipeline that splits a text file into chunks and generates embeddings. It also stores the publish_year with
+                                                                each chunk.
+                                                status:
+                                                        type: string
+                                                        example: SERVING
+                                                functions:
+                                                        type: array
+                                                        items:
+                                                                type: object
+                                                                properties:
+                                                                        action:
+                                                                                type: string
+                                                                                example: INDEX_DOC
+                                                                        name:
+                                                                                type: string
+                                                                                example: index_my_doc
+                                                                        inputField:
+                                                                                type: string
+                                                                                example: doc_url
+                                                                        language:
+                                                                                type: string
+                                                                                example: ENGLISH
+                                                                example:
+                                                                        - action: INDEX_DOC
+                                                                          name: index_my_doc
+                                                                          inputField: doc_url
+                                                                          language: ENGLISH
+                                                clusterId:
+                                                        type: string
+                                                        example: in03-***************
+                                                newCollectionName:
+                                                        type: string
+                                                        example: my_new_collection
+                SuccessfulResponse:
+                        type: object
+                        properties:
+                                code:
+                                        type: integer
+                                        example: 200
+                                data:
+                                        type: array
+                                        items:
+                                                type: object
+                                                properties:
+                                                        pipelineId:
+                                                                type: string
+                                                                example: pipe-7ecce4a7e3a79d3c2dfe8a
+                                                        name:
+                                                                type: string
+                                                                example: gpts
+                                                        type:
+                                                                type: string
+                                                                example: INGESTION
+                                                        description:
+                                                                type: string
+                                                                example: This pipeline transforms unstructured data to embeddings and stores them in a vector database collection.
+                                                        status:
+                                                                type: string
+                                                                example: SERVING
+                                                        functions:
+                                                                type: array
+                                                                items:
+                                                                        type: object
+                                                                        properties:
+                                                                                action:
+                                                                                        type: string
+                                                                                        example: INDEX_DOC
+                                                                                name:
+                                                                                        type: string
+                                                                                        example: index
+                                                                                inputField:
+                                                                                        type: string
+                                                                                        example: doc_url
+                                                                                language:
+                                                                                        type: string
+                                                                                        example: ENGLISH
+                                                        clusterId:
+                                                                type: string
+                                                                example: in03-75cf07ef4b53f5d
+                                                        newCollectionName:
+                                                                type: string
+                                                                example: gpts
