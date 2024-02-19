@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: Zilliz Pipeline API, can help ingest docs into pipelines and search relavent text chucks for any text.
+  version: 1.0.0
+servers:
+  - url: https://controller.api.gcp-us-west1.zillizcloud.com
+paths:
+  /v1/pipelines/{SearchPipelineID}/run:
+    post:
+      summary: Run Pipeline
+      description: Run a Search pipeline with the specified data to Query text in vector database.
+      x-openai-isConsequential: false
+      operationId: searchDoc
+      parameters:
+        - name: SearchPipelineID
+          in: path
+          description: The ID of the pipeline for searching documents.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueryTextRequest"
+      responses:
+        "200":
+          description: Search doc successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryTextResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerErrorResponse"
+components:
+  schemas:
+    QueryTextRequest:
+      type: object
+      required:
+        - data
+        - params
+      properties:
+        data:
+          type: object
+          properties:
+            query_text:
+              type: string
+        params:
+          type: object
+          properties:
+            limit:
+              type: integer
+              minimum: 5
+            offset:
+              type: integer
+              minimum: 0
+            outputFields:
+              type: array
+              items:
+                type: string
+              example:
+                - chunk_text
+                - chunk_id
+                - doc_name
+            filter:
+              type: string
+              example: chunk_id >= 0
+    QueryTextResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        data:
+          type: object
+          properties:
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  distance:
+                    type: number
+                  chunk_id:
+                    type: integer
+                  chunk_text:
+                    type: string
+                  doc_name:
+                    type: string
+    InternalServerErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 10039
+        message:
+          type: string
+          example: An internal system error occurred. Please retry later.
