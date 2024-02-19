@@ -11,13 +11,6 @@ paths:
       description: Run a Search pipeline with the specified data to Query text in vector database.
       x-openai-isConsequential: false
       operationId: searchDoc
-      parameters:
-        - name: SearchPipelineID
-          in: path
-          description: The ID of the pipeline for searching documents.
-          required: true
-          schema:
-            type: string
       requestBody:
         content:
           application/json:
