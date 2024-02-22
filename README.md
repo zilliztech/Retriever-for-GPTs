@@ -76,7 +76,7 @@ The instructions should include **2 parts**, the first part is the general instr
    with empathy and awareness of their complexity.
    ```
 
-2. Copy the instruction **Part 2** from [rag_prompt.json](prompt%2Frag_prompt.json) and append it to the above instruction. This is to instruct the GPT how to trigger the action to retrieve external knowledge by calling RESTful API of Zilliz Cloud Pipelines.
+2. Copy the instruction **Part 2** from [rag_prompt.md](prompt%2Frag_prompt.md) and append it to the above instruction. This is to instruct the GPT how to trigger the action to retrieve external knowledge by calling RESTful API of Zilliz Cloud Pipelines.
   
    <img src="images/instructions.png" width="100%"  alt=""/>
 
