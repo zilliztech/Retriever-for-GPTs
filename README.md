@@ -12,6 +12,11 @@ Zilliz Cloud Pipelines is DevOps free, highly scalable and economic. Compared to
 
 In GPTs, the integration with Zilliz Cloud Pipelines can be simply done by copying the API config and prompt from this repo.
 
+### Upcoming Feature Updates
+1. **Document Management**: Soon, we'll release a guide for managing documents with GPTs via Zilliz Cloud Pipelines, covering both document ingestion and deletion.
+2. **Memory Feature**: Later this year, GPTs will gain the ability to remember conversation histories through Zilliz Cloud Pipelines, enhancing future interactions.
+3. **Assistant API Integration**: Integration with the OpenAI Assistant API is coming soon, enabling more flexible use of these features beyond direct GPTs interactions.
+
 # Quick Start
 **This tutorial shows how to use Zilliz Cloud Pipelines to build your own GPTs with retrieval capability.**
 
