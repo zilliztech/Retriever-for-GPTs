@@ -6,3 +6,9 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# GitHub Copilot persisted chat sessions
+/copilot/chatSessions
+/modules.xml
+/inspectionProfiles/Project_Default.xml
+/Retriever-for-GPTs.iml
+/vcs.xml

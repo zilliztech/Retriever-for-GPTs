@@ -2,6 +2,7 @@
 
 This repo contains instructions and templates to plug-in external retriever service for **[GPTs](https://openai.com/blog/introducing-gpts)**, powered by Zilliz Cloud Pipelines.
 
+
 **[Zilliz Cloud Pipelines](https://zilliz.com/zilliz-cloud-pipelines)**  is a one-stop retrieval service. By configuring this external retrieval service as a GPTs "Action", this approach provides a more flexible and economic alternative to the default GPTs knowledge base.
 
 - try a live demo here: https://chat.openai.com/g/g-CXDhOVcGf-ask-about-2023 (ChatGPT Plus Subscription required to use GPTs)
@@ -11,6 +12,9 @@ This repo contains instructions and templates to plug-in external retriever serv
 Zilliz Cloud Pipelines is DevOps free, highly scalable and economic. Compared to the default GPTs retrieval capability that only accepts uploaded files, this service supports rich customizations such as multiple chunking strategy, choices of embedding models from BAAI, Voyage AI and OpenAI, and optional reranking capability (coming soon in early March).
 
 In GPTs, the integration with Zilliz Cloud Pipelines can be simply done by copying the API config and prompt from this repo.
+### **Zilliz Cloud Pipelines GPTs**:
+This GPTs simplifies managing Zilliz Cloud Pipelines, enabling users to easily list, create, run, and drop pipelines through straightforward commands.
+- Try it here: https://chat.openai.com/g/g-Y0GkmmkKJ-zilliz-cloud-pipelines
 
 ### Upcoming Feature Updates
 1. **Document Management**: Soon, we'll release a guide for managing documents with GPTs via Zilliz Cloud Pipelines, covering both document ingestion and deletion.
